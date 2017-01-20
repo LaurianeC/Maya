@@ -1,0 +1,63 @@
+import maya.OpenMaya as OpenMaya
+ 
+def particleFillSelection(  ):
+ 
+	# get the active selection
+	selection = OpenMaya.MSelectionList()
+	OpenMaya.MGlobal.getActiveSelectionList( selection )
+	iterSel = OpenMaya.MItSelectionList(selection, OpenMaya.MFn.kMesh)
+ 
+	# go througt selection
+	while not iterSel.isDone():
+ 
+		# get dagPath
+		dagPath = OpenMaya.MDagPath()
+		iterSel.getDagPath( dagPath )
+ 
+		# create empty point array
+		inMeshMPointArray = OpenMaya.MPointArray()
+ 
+		# create function set and get points in world space
+		currentInMeshMFnMesh = OpenMaya.MFnMesh(dagPath)
+		currentInMeshMFnMesh.getPoints(inMeshMPointArray, OpenMaya.MSpace.kWorld)
+ 
+		# put each point to a list
+		pointList = []
+ 
+		for i in range( inMeshMPointArray.length() ) :
+ 
+			pointList.append( [inMeshMPointArray[i][0], inMeshMPointArray[i][1], inMeshMPointArray[i][2]] )
+ 
+		return pointList
+
+print particleFillSelection()
+
+
+
+from math import * 
+
+def sign(a) :
+  if a > 0:
+    return 1
+  else: 
+    return -1 
+
+
+def dot(a,b):
+  return 0
+
+
+pointsCage = []
+facesCage = []
+pointsInt = []
+facesInt = [] 
+
+for p in pointsInt :
+  for f in facesCage :
+    #get v1 v2 v3 from f 
+    v1 = v1 - p
+    v2 = v2 - p
+    v3 = v3 - p
+    #get normal n from f 
+    ps = dot(v1, n) 
+    p = ps * n 
