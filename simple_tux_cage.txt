@@ -1,0 +1,64 @@
+polyCylinder -r 1 -h 2 -sx 20 -sy 1 -sz 1 -ax 0 1 0 -rcp 0 -cuv 3 -ch 1;
+// Result: pCylinder1 polyCylinder1 // 
+scale -r 2.628273 2.628273 2.628273 ;
+scale -r 1 1.87946 1 ;
+move -r 0 -3.944468 0 ;
+hilite polyCylinder1 ;
+select -tgl pCylinder1.f[9] ;
+select -tgl pCylinder1.f[8] ;
+select -tgl pCylinder1.f[7] ;
+polySubdivideFacet -dv 1 -m 0 -ch 1 pCylinder1.f[7:9];
+// Result: polySubdFace1 // 
+select -tgl pCylinder1.f[66] ;
+select -tgl pCylinder1.f[9] ;
+select -r pCylinder1.f[66] ;
+select -tgl pCylinder1.f[9] ;
+select -tgl pCylinder1.f[63] ;
+select -tgl pCylinder1.f[8] ;
+select -tgl pCylinder1.f[60] ;
+select -tgl pCylinder1.f[7] ;
+polySubdivideFacet -dv 1 -m 0 -ch 1 pCylinder1.f[7:9] pCylinder1.f[60] pCylinder1.f[63] pCylinder1.f[66];
+// Result: polySubdFace2 // 
+select -r pCylinder1.f[86] ;
+select -tgl pCylinder1.f[77] ;
+select -tgl pCylinder1.f[82] ;
+select -tgl pCylinder1.f[9] ;
+select -tgl pCylinder1.f[74] ;
+select -tgl pCylinder1.f[83] ;
+select -tgl pCylinder1.f[8] ;
+select -tgl pCylinder1.f[79] ;
+select -tgl pCylinder1.f[80] ;
+select -r pCylinder1.f[8:9] pCylinder1.f[74] pCylinder1.f[77] pCylinder1.f[79:80] pCylinder1.f[82:83] pCylinder1.f[86] ;
+polyExtrudeFacet -constructionHistory 1 -keepFacesTogether 1 -pvx -2.470625697 -pvy -5.179401766 -pvz -0.2846925038 -divisions 1 -twist 0 -taper 1 -off 0 -thickness 0 -smoothingAngle 30 pCylinder1.f[8:9] pCylinder1.f[74] pCylinder1.f[77] pCylinder1.f[79:80] pCylinder1.f[82:83] pCylinder1.f[86];
+// Result: polyExtrudeFace1 // 
+setAttr "polyExtrudeFace1.localTranslate" -type double3 0 0 2.029443 ;
+select -r pCylinder1.f[0] ;
+select -tgl pCylinder1.f[19] ;
+select -tgl pCylinder1.f[18] ;
+polySubdivideFacet -dv 1 -m 0 -ch 1 pCylinder1.f[0] pCylinder1.f[18:19];
+// Result: polySubdFace3 // 
+select -r pCylinder1.f[0] ;
+select -tgl pCylinder1.f[113] ;
+select -tgl pCylinder1.f[19] ;
+select -tgl pCylinder1.f[110] ;
+select -tgl pCylinder1.f[18] ;
+select -tgl pCylinder1.f[107] ;
+polySubdivideFacet -dv 1 -m 0 -ch 1 pCylinder1.f[0] pCylinder1.f[18:19] pCylinder1.f[107] pCylinder1.f[110] pCylinder1.f[113];
+// Result: polySubdFace4 // 
+select -tgl pCylinder1.f[127] ;
+select -tgl pCylinder1.f[118] ;
+select -r pCylinder1.f[0] ;
+select -r pCylinder1.f[127] ;
+select -tgl pCylinder1.f[118] ;
+select -tgl pCylinder1.f[0] ;
+select -tgl pCylinder1.f[133] ;
+select -tgl pCylinder1.f[132] ;
+select -tgl pCylinder1.f[124] ;
+select -tgl pCylinder1.f[19] ;
+select -tgl pCylinder1.f[129] ;
+select -tgl pCylinder1.f[130] ;
+select -tgl pCylinder1.f[121] ;
+select -r pCylinder1.f[0] pCylinder1.f[19] pCylinder1.f[118] pCylinder1.f[121] pCylinder1.f[124] pCylinder1.f[127] pCylinder1.f[129:130] pCylinder1.f[132:133] ;
+polyExtrudeFacet -constructionHistory 1 -keepFacesTogether 1 -pvx 2.423961016 -pvy -5.179402204 -pvz -0.3762778 -divisions 1 -twist 0 -taper 1 -off 0 -thickness 0 -smoothingAngle 30 pCylinder1.f[0] pCylinder1.f[19] pCylinder1.f[118] pCylinder1.f[121] pCylinder1.f[124] pCylinder1.f[127] pCylinder1.f[129:130] pCylinder1.f[132:133];
+// Result: polyExtrudeFace2 // 
+setAttr "polyExtrudeFace2.localTranslate" -type double3 0 0 2.721878 ;
