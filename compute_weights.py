@@ -131,7 +131,7 @@ def compute_Green(V,T,L,n):
 
 					
 	return [[phi], [psi]]			
-				
+#TODO : récupérer les vertices/faces de la cage, L les points du maillage et n les normales aux surfaces du maillage avec maya.cmds				
 verts = [[1,0,-1], [0,1,-1], [-1,-1,-1] ,[0,0,1]]
 faces = [[0,1,2], [0,1,3], [0,2,3], [1,2,3]]
 L = [[0.1,0.1,0.1], [0.5,0.5,0.5]]
