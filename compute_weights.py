@@ -31,6 +31,7 @@ def cross(a, b):
     return c
 #Fonction auxiliaire de l'algorithme		
 def GCTriInt(p, v1, v2, eta):
+	print p, v1, v2
 	alpha = math.acos(PS(moins(v1,v2), moins(v1,p))/( (  Norme(moins(p,v1)) * Norme(moins(v1,v2)) )))
 	beta = math.acos(PS(moins(p,v1), moins(p,v2))/((  Norme(moins(p,v1)) * Norme(moins(p,v2)) )))
 	lam = PS(moins(p,v1), moins(p,v1)) * math.sin(alpha) * math.sin(alpha)
@@ -78,6 +79,7 @@ def compute_Green(V,T,L,n):
 	epsilon = 0.1
 	for p in L:
 		eta = eta + 1
+		j = -1
 		for F in T: #avec donc les vertices V[F[0]], V[F[1]] V[F[2]] ou bien V[T[j][0]], V[T[j][1]], V[T[j][2]]
 			j = j+1
 			
@@ -97,6 +99,7 @@ def compute_Green(V,T,L,n):
 			#calcul de I_i, II_i N_i et q_i, i =1,2 ou 3 dans le papier
 			for l in [0, 1, 2]: 
 				I[l] = GCTriInt(p, V[F[l]], V[F[(l+1)%3]], [0.0,0.0,0.0])
+				
 				II[l] = GCTriInt([0.0,0.0,0.0], V[F[(l+1)%3]], V[F[l]], [0.0,0.0,0.0])
 				s[l] = (sign(PS(cross(moins(p, V[F[l]]), moins(p, V[F[(l+1)%3]])), n[j])))
 				
@@ -129,7 +132,10 @@ def compute_Green(V,T,L,n):
 					
 	return [[phi], [psi]]			
 				
-
+verts = [[1,0,-1], [0,1,-1], [-1,-1,-1] ,[0,0,1]]
+faces = [[0,1,2], [0,1,3], [0,2,3], [1,2,3]]
+L = [[0.1,0.1,0.1], [0.5,0.5,0.5]]
+n = [[0.0,0.0,-1], [0.3,-0.3,0.3], [0.3,-0.3,-0.3], [-0.3,0.3,0.3]]
 print compute_Green(verts, faces,L,n)
 
 
@@ -183,4 +189,4 @@ psi = []
 for l in range(5):
 	psi.append(2 *[[0.0,0.0,0.0]])
 print psi
-"""		
+"""
