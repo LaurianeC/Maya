@@ -21,7 +21,6 @@
 //  except their translation if the option "Show Position" has been turned on.  To find what 
 //  geometries we can export, we search by name, hence, if a polygon cube contains in its 
 //  named the string "nurbsSphere", it will be written out as a nurbs sphere.
-//
 
 #include <maya/MStatus.h>
 #include <maya/MObject.h>
@@ -96,8 +95,8 @@ public:
 
 	//This function is called by maya when export or save is called.
 	/*MStatus writer(const MFileObject& file,
-		const MString& optionsString,
-		MPxFileTranslator::FileAccessMode mode);*/
+	const MString& optionsString,
+	MPxFileTranslator::FileAccessMode mode);*/
 
 private:
 	//The magic string to verify it's a LEP file
@@ -128,7 +127,7 @@ MStatus OffTranslator::reader(const MFileObject& file,
 	MPxFileTranslator::FileAccessMode mode)
 {
 
-	cout << "INSIDE READER" << endl; 
+	cout << "INSIDE READER" << endl;
 	const MString fname = file.fullName();
 
 	MStatus rval(MS::kSuccess);
@@ -154,39 +153,63 @@ MStatus OffTranslator::reader(const MFileObject& file,
 	}
 
 
-	//Traitement de la première ligne
-	inputfile.getline(buf, maxLineSize, ' '); 
-	//int nb_vertices = (int)buf; 
-	const int nb_vertices = 6; 
-	inputfile.getline(buf, maxLineSize, ' ');
-	int nb_facettes = 2;
-	inputfile.getline(buf, maxLineSize, ' ');
+	char buf2[maxLineSize];
 
+	//Traitement de la premiÃ¨re ligne
+	inputfile.getline(buf2, maxLineSize);
+	MString line = buf2; 
+	MStringArray tokensGen; 
+	line.split(' ', tokensGen); 
+
+	const int nb_vertices = tokensGen[0].asInt();
+
+	const int nb_facettes = tokensGen[1].asInt();
 
 	//Parcourir tous les vertices du file
-	float vertices[nb_vertices]; 
-	for (int i = 0 ; i < nb_vertices ; i++) {
-		cout << "hi" << endl;
-		inputfile.getline(buf, maxLineSize, ' ');
-		vertices[3*i] = buf;
-		inputfile.getline(buf, maxLineSize, ' ');
-		vertices[3 * i + 1] = (float)buf;
-		inputfile.getline(buf, maxLineSize, ' ');
-		vertices[3 * i +2] = (float)buf;
+	float vertices[100000] ;
+	
+	for (int i = 0; i < nb_vertices; i++) {
+		inputfile.getline(buf2, maxLineSize);
+		MString line = buf2;
+		MStringArray tokens;
+		line.split(' ', tokens);
+		
+		vertices[3 * i] = tokens[0].asFloat(); 
+		vertices[3 * i+1] = tokens[1].asFloat();
+		vertices[3 * i+2] = tokens[2].asFloat();
 	}
-	for (int j = 0 ; j < nb_facettes ; j++) {
-		char* stg = "polyCreateFacet";
-		strcat(stg, "-p ");
-		inputfile.getline(buf, maxLineSize, ' ');
-		stg << vertices[3*(int)buf] << " " ;
-		inputfile.getline(buf, maxLineSize, ' ');
-		stg << vertices[3*(int)buf +1] << " ";
-		inputfile.getline(buf, maxLineSize, ' ');
-		stg << vertices[3 * (int)buf + 1] ;
 
-		//Create cmdString polyCreateFacet -p 0.0 0.0 0.0 -p 10.0 0.0 0.0 -p 10.0 10.0 0.0;
-		MString cmdString;
-		cmdString.set(stg);
+	for (int j = 0; j < nb_facettes; j++) {
+		//MString string = "polyCreateFacet -p 0.0 0.0 0.0 -p 10.0 0.0 0.0 -p 10.0 10.0 0.0;";
+		inputfile.getline(buf2, maxLineSize);
+		MString line = buf2;
+		MStringArray tokens;
+		line.split(' ', tokens);
+
+		MString cmdString = "polyCreateFacet -p "; 
+		cmdString += vertices[3*tokens[1].asInt()]; 
+		cmdString += " "; 
+		cmdString += vertices[3*tokens[1].asInt()+1];
+		cmdString += " ";
+		cmdString += vertices[3*tokens[1].asInt()+2];
+		cmdString += " ";
+		cmdString += "-p ";
+		cmdString += vertices[3*tokens[2].asInt() +0];
+		cmdString += " ";
+		cmdString += vertices[3*tokens[2].asInt()+1];
+		cmdString += " ";
+		cmdString += vertices[3*tokens[2].asInt() +2];
+		cmdString += " ";
+		cmdString += "-p ";
+		cmdString += vertices[3*tokens[3].asInt() +0];
+		cmdString += " ";
+		cmdString += vertices[3*tokens[3].asInt() +1];
+		cmdString += " ";
+		cmdString += vertices[3*tokens[3].asInt() +2 ];
+		cmdString += " ";
+
+
+
 		if (!MGlobal::executeCommand(cmdString))
 			rval = MS::kFailure;
 	}
@@ -194,130 +217,6 @@ MStatus OffTranslator::reader(const MFileObject& file,
 
 	return rval;
 }
-/*
-// The currently recognised primitives.
-const char* primitiveStrings[] = {
-	"nurbsSphere",
-	"nurbsCone",
-	"nurbsCylinder",
-};
-const unsigned numPrimitives = sizeof(primitiveStrings) / sizeof(char*);
-
-// Corresponding commands to create the primitives
-const char* primitiveCommands[] = {
-	"sphere",
-	"cone",
-	"cylinder",
-};
-
-//The writer simply goes gathers all objects from the scene.
-//We will check if the object has a transform, if so, we will check
-//if it's either a nurbsSphere, nurbsCone or nurbsCylinder.  If so,
-//we will write it out.
-MStatus LepTranslator::writer(const MFileObject& file,
-	const MString& options,
-	MPxFileTranslator::FileAccessMode mode)
-{
-	MStatus status;
-	bool showPositions = false;
-	unsigned int  i;
-	const MString fname = file.fullName();
-
-	ofstream newf(fname.asChar(), ios::out);
-	if (!newf) {
-		// open failed
-		cerr << fname << ": could not be opened for reading\n";
-		return MS::kFailure;
-	}
-	newf.setf(ios::unitbuf);
-
-	if (options.length() > 0) {
-		// Start parsing.
-		MStringArray optionList;
-		MStringArray theOption;
-		options.split(';', optionList);    // break out all the options.
-
-		for (i = 0; i < optionList.length(); ++i){
-			theOption.clear();
-			optionList[i].split('=', theOption);
-			if (theOption[0] == MString("showPositions") &&
-				theOption.length() > 1) {
-				if (theOption[1].asInt() > 0){
-					showPositions = true;
-				}
-				else{
-					showPositions = false;
-				}
-			}
-		}
-	}
-
-	// output our magic number
-	newf << "<LEP>\n";
-
-	MItDag dagIterator(MItDag::kBreadthFirst, MFn::kInvalid, &status);
-
-	if (!status) {
-		status.perror("Failure in DAG iterator setup");
-		return MS::kFailure;
-	}
-
-	MSelectionList selection;
-	MGlobal::getActiveSelectionList(selection);
-	MItSelectionList selIterator(selection, MFn::kDagNode);
-
-	bool done = false;
-	while (true)
-	{
-		MObject currentNode;
-		switch (mode)
-		{
-		case MPxFileTranslator::kSaveAccessMode:
-		case MPxFileTranslator::kExportAccessMode:
-			if (dagIterator.isDone())
-				done = true;
-			else {
-				currentNode = dagIterator.item();
-				dagIterator.next();
-			}
-			break;
-		case MPxFileTranslator::kExportActiveAccessMode:
-			if (selIterator.isDone())
-				done = true;
-			else {
-				selIterator.getDependNode(currentNode);
-				selIterator.next();
-			}
-			break;
-		default:
-			cerr << "Unrecognized write mode: " << mode << endl;
-			break;
-		}
-		if (done)
-			break;
-
-		//We only care about nodes that are transforms
-		MFnTransform dagNode(currentNode, &status);
-		if (status == MS::kSuccess)
-		{
-			MString nodeNameNoNamespace = MNamespace::stripNamespaceFromName(dagNode.name());
-			for (i = 0; i < numPrimitives; ++i) {
-				if (nodeNameNoNamespace.indexW(primitiveStrings[i]) >= 0){
-					// This is a node we support
-					newf << primitiveCommands[i] << " -n " << nodeNameNoNamespace << endl;
-					if (showPositions) {
-						MVector pos;
-						pos = dagNode.getTranslation(MSpace::kObject);
-						newf << "move " << pos.x << " " << pos.y << " " << pos.z << endl;
-					}
-				}
-			}
-		}//if (status == MS::kSuccess)
-	}//while loop
-
-	newf.close();
-	return MS::kSuccess;
-}*/
 
 // Whenever Maya needs to know the preferred extension of this file format,
 // it calls this method. For example, if the user tries to save a file called
@@ -392,4 +291,3 @@ MStatus uninitializePlugin(MObject obj)
 
 	return status;
 }
-
