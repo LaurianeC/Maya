@@ -1,6 +1,6 @@
 import maya.OpenMaya as OpenMaya
 
-def particleFillSelection(  ):
+def particleFillSelection(	):
 
 	# get the active selection
 	selection = OpenMaya.MSelectionList()
@@ -20,7 +20,7 @@ def particleFillSelection(  ):
 		inMeshMNormalArray = OpenMaya.MFloatVectorArray()
 		inMeshMTriangleArray = OpenMaya.MIntArray()
 		inMeshMTriangleCount = OpenMaya.MIntArray()
-        
+		
 		# create function set and get points in world space
 		currentInMeshMFnMesh = OpenMaya.MFnMesh(dagPath)
 		currentInMeshMFnMesh.getPoints(inMeshMPointArray, OpenMaya.MSpace.kWorld)
@@ -43,8 +43,8 @@ def particleFillSelection(  ):
 		
 		for j in range (inMeshMNormalArray.length() ) :
 		  normalList.append( [inMeshMNormalArray[j][0], inMeshMNormalArray[j][1], inMeshMNormalArray[j][2]] )
-		  nbNormals = nbNormals + 1    
-       
+		  nbNormals = nbNormals + 1	   
+	   
 		totalList.append(normalList)
 		print "Normals"
 		print nbNormals
@@ -52,8 +52,8 @@ def particleFillSelection(  ):
 		triangleCountList = []
 		triangleList = []
 		for k in range (inMeshMTriangleCount.length() ) :
-		    triangleList.append([inMeshMTriangleArray[k*3], inMeshMTriangleArray[k*3+1], inMeshMTriangleArray[k*3 +2]])
-        
+			triangleList.append([inMeshMTriangleArray[k*3], inMeshMTriangleArray[k*3+1], inMeshMTriangleArray[k*3 +2]])
+		
 		print "Nb triangles count "
 		print inMeshMTriangleCount.length()
 		print "Nb points array"
@@ -61,12 +61,12 @@ def particleFillSelection(  ):
 		print triangleList
 		
 		for T in range (inMeshMTriangleCount.length()):
-		    index = triangleList[T][0] 
-		    print pointList[index]
+			index = triangleList[T][0] 
+			print pointList[index]
 		iterSel.next() 
 		totalList.append(inMeshMTriangleCount.length())
 		totalList.append(triangleList)
-	return totalList 
+		return totalList 
 
 print "success"
 particleFillSelection()

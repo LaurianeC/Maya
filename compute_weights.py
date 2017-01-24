@@ -60,13 +60,13 @@ def compute_Green(V,T,L,n):
 	#Phi[eta][j] : 
 	psi = []
 	for l in range(len(T)):
-			psi.append(len(L) *[[0.0,0.0,0.0]])
+			psi.append(len(L) *[[0.0]])
 	print psi
 	#Psi[eta][j]
 	#[[[x,x,x], [x,x,x]], [[x,x,x], [x,x,x]], [[x,x,x], [x,x,x]]]
 	phi = []
 	for l in range(len(T)):
-			phi.append(len(L) *[[0.0,0.0,0.0]])
+			phi.append(len(L) *[[0.0]])
 	
 	#TODO : initialiser psi et phi avec les bonnes dimensions
 	p = [0.0, 0.0, 0.0]
@@ -125,9 +125,9 @@ def compute_Green(V,T,L,n):
 					w[i] = w[i] + N[i][k] * II[i]
 						
 				
-			if Norme(V[F[l]]) > epsilon:
-				for l in [0,1,2]:
-					phi[j][eta][l] = phi[j][eta][l] + PS(N[(l+1)%3],w) / PS(N[(l+1)%3], V[F[l]])
+			if Norme(w) > epsilon:
+				for l in F[l]:
+					phi[l][eta] = phi[l][eta] + PS(N[(l+1)%3],w) / PS(N[(l+1)%3], V[F[l]])
 
 					
 	return [[phi], [psi]]			
